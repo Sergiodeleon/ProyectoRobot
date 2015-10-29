@@ -2,12 +2,26 @@
   Blank Simple Project.c
   http://learn.parallax.com/propeller-c-tutorials 
 */
+// Sergio de Leon 14312
+// Manolo Capilla 131350
+// Programa para resolver laberinto con robot paralax; 27 de octubre de 2015
 #include "simpletools.h"                      // Include simpletools header
 #include "abdrive.h"                          // Include abdrive header
 #include "ping.h"                             // Include ping header
 
 int derecha; //variable para verificar si en el lado derecho hay pared
 int desicion; //variable para indicar al robot que decision tomar
+//Estructura del stack
+struct stack{
+    int stk[100];
+    int top;
+  };
+
+typedef struct stack ST;
+ST s;
+
+void push(int);
+int pop(void);
 
 int main()                                    // main function
 {
@@ -22,14 +36,21 @@ int main()                                    // main function
     //verifica si hay pared a la derecha
     derecha=evaluar_d();
     if (derecha == 1 && v_adelante() > 4){
-      girarDerecha();  
+      push(2);   
     }
     //verifica si hay pared adelante
     if (v_adelante() < 5){
-        girarIzquierda(); 
+      push(1); 
     }
     
-
+    
+    desicion= pop();
+    if (desicion == 1){
+       girarIzquierda();
+     }
+     if (desicion == 2){
+       girarDerecha();
+      }
   }
 }
 
@@ -75,3 +96,13 @@ void girarIzquierda(){
   drive_goto(5,5);
   return;
 }
+void push(int a){
+    s.top = s.top+1;
+    s.stk[s.top]= a;
+  }
+  
+int pop(){
+    int a = s.stk[s.top];
+    s.top = s.top - 1;
+    return a;
+  }
